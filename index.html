@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump Pressure Monitoring Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        .pressure-display {
+            font-size: 2em;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+        .normal { background-color: #4CAF50; }
+        .high { background-color: #FF5733; }
+        .low { background-color: #FFC107; }
+        .alert {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pump Pressure Monitoring System</h1>
+        <div id="pressure" class="pressure-display normal">Pressure: 50 PSI</div>
+        <div id="alert" class="alert"></div>
+        <button onclick="startMonitoring()">Start Monitoring</button>
+        <button onclick="stopMonitoring()">Stop Monitoring</button>
+    </div>
+
+    <script>
+        let pressureInterval;
+        let currentPressure = 50; // Initial pressure value
+        let pressureLowerLimit = 30; // Minimum safe pressure in PSI
+        let pressureUpperLimit = 70; // Maximum safe pressure in PSI
+
+        // Function to simulate the pump pressure readings
+        function getPressure() {
+            // Simulate pressure variations within a random range
+            let variation = Math.random() * 10 - 5; // Random variation between -5 and +5 PSI
+            currentPressure = Math.max(pressureLowerLimit, Math.min(pressureUpperLimit, currentPressure + variation));
+            return currentPressure;
+        }
+
+        // Function to update the pressure display and alert system
+        function updatePressureDisplay() {
+            const pressureElement = document.getElementById('pressure');
+            const alertElement = document.getElementById('alert');
+            const pressure = getPressure();
+
+            // Update pressure display
+            pressureElement.textContent = `Pressure: ${pressure.toFixed(2)} PSI`;
+
+            // Update color based on pressure levels
+            if (pressure < pressureLowerLimit) {
+                pressureElement.className = 'pressure-display low';
+                alertElement.textContent = 'Alert: Pressure is too low!';
+            } else if (pressure > pressureUpperLimit) {
+                pressureElement.className = 'pressure-display high';
+                alertElement.textContent = 'Alert: Pressure is too high!';
+            } else {
+                pressureElement.className = 'pressure-display normal';
+                alertElement.textContent = '';
+            }
+        }
+
+        // Function to start monitoring
+        function startMonitoring() {
+            if (!pressureInterval) {
+                pressureInterval = setInterval(updatePressureDisplay, 1000); // Update every second
+            }
+        }
+
+        // Function to stop monitoring
+        function stopMonitoring() {
+            clearInterval(pressureInterval);
+            pressureInterval = null;
+            document.getElementById('alert').textContent = '';
+            document.getElementById('pressure').textContent = 'Monitoring stopped';
+            document.getElementById('pressure').className = 'pressure-display normal';
+        }
+    </script>
+</body>
+</html>
